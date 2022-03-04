@@ -10,6 +10,7 @@
         <module name="order-service" />
         <module name="payment-service" />
         <module name="account-service" />
+        <module name="Demo-docker" />
         <module name="microservice-springhero" />
       </profile>
     </annotationProcessing>

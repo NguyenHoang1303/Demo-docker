@@ -1,4 +1,7 @@
 version: '3.8'
+networks:
+  mynet:
+    driver: bridge
 services:
   database-service:
     container_name: database-container
@@ -8,31 +11,38 @@ services:
       MYSQL_ROOT_HOST: '%'
     ports:
       - 3307:3306
+    networks:
+      - mynet
     volumes:
       - ./database:/docker-entrypoint-initdb.d
-  order-service:
-    depends_on:
-      - database-service
-    build: ./order-service
-    volumes:
-      - ./order-service:/order-service
-      - ~/.m2:/root/.m2
-    working_dir: /order-service
-    ports:
-      - 8080:8080
-    command: mvn clean spring-boot:run
-  payment-service:
-    depends_on:
-      - database-service
-    build: ./payment-service
-    volumes:
-      - ./payment-service:/payment-service
-      - ~/.m2:/root/.m2
-    working_dir: /payment-service
-    ports:
-      - 8081:8080
-    command: mvn clean spring-boot:run
+#  order-service:
+#    depends_on:
+#      - database-service
+#    build: ./order-service
+#    volumes:
+#      - ./order-service:/order-service
+#      - ~/.m2:/root/.m2
+#    working_dir: /order-service
+#    ports:
+#      - 8080:8080
+#    networks:
+#      - mynet
+#    command: mvn clean spring-boot:run
+#  payment-service:
+#    depends_on:
+#      - database-service
+#    build: ./payment-service
+#    volumes:
+#      - ./payment-service:/payment-service
+#      - ~/.m2:/root/.m2
+#    working_dir: /payment-service
+#    ports:
+#      - 8081:8080
+#    networks:
+#      - mynet
+#    command: mvn clean spring-boot:run
   account-service:
+    container_name: account-service-container
     depends_on:
       - database-service
     build:  ./account-service
@@ -40,13 +50,26 @@ services:
       - ./account-service:/account-service
       - ~/.m2:/root/.m2
     working_dir: /account-service
+    networks:
+      - mynet
     ports:
-      - 8082:8080
+      - 8000:8000
     command: mvn clean spring-boot:run
   keycloak:
+    container_name: keycloak_container
     depends_on:
       - database-service
-    image: quay.io/keycloak/keycloak:legacy
+    image: jboss/keycloak:4.8.3.Final
+    restart: on-failure
+    command:
+      - "-b"
+      - "0.0.0.0"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=dir"
+      - "-Dkeycloak.migration.dir=/config/"
+      - "-Dkeycloak.migration.strategy=IGNORE_EXISTING"
+    volumes:
+      - ./config:/config/
     environment:
       DB_VENDOR: MYSQL
       DB_ADDR: database-service
@@ -54,9 +77,10 @@ services:
       DB_USER: root
       DB_PASSWORD: root
       KEYCLOAK_USER: admin
+      DB_PORT: 3306
       KEYCLOAK_PASSWORD: Pa55w0rd
-      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the MySQL JDBC driver documentation in order to use it.
-      JDBC_PARAMS: "connectTimeout=30000"
+    networks:
+      - mynet
     ports:
       - 8888:8080
 
