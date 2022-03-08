@@ -41,15 +41,15 @@ services:
 #    networks:
 #      - mynet
 #    command: mvn clean spring-boot:run
-  account-service:
-    container_name: account-service-container
+  authentication-service:
+    container_name: authentication-service-container
     depends_on:
       - database-service
-    build:  ./account-service
+    build: ./authentication-service
     volumes:
-      - ./account-service:/account-service
+      - ./authentication-service:/authentication-service
       - ~/.m2:/root/.m2
-    working_dir: /account-service
+    working_dir: /authentication-service
     networks:
       - mynet
     ports:
