@@ -1,34 +1,54 @@
 package com.example.orderservice.controller;
 
 import com.example.orderservice.entity.Order;
-import com.example.orderservice.repository.OrderRepository;
+import com.example.orderservice.response.RESTPagination;
+import com.example.orderservice.response.RESTResponse;
+import com.example.orderservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("orders")
+@RequestMapping("api/v1/orders")
 public class OrderController {
 
     @Autowired
-    OrderRepository repository;
-
-    @RequestMapping
-    public List<Order> getAll() {
-        return repository.findAll();
-    }
+    OrderService orderService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Order create(@RequestBody Order order) {
-        try {
-            return repository.save(order);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public ResponseEntity create(@RequestBody Order order) {
+        return new ResponseEntity<>(
+                new RESTResponse.Success()
+                        .addData(orderService.create(order))
+                        .build(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity getAll(@RequestParam(name = "page", defaultValue = "1") int page,
+                                 @RequestParam(name = "pageSize", defaultValue = "6") int pageSize
+    ) {
+        Page<Order> paging = orderService.getAll(page, pageSize);
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .setPagination(new RESTPagination(paging.getNumber() + 1, paging.getSize(), paging.getTotalElements()))
+                .addData(paging.getContent())
+                .buildData(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "detail")
+    public ResponseEntity finById(@RequestParam(name = "id") int id) {
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(orderService.findById((long) id))
+                .buildData(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "user/detail")
+    public ResponseEntity getOrderByUserId(@RequestParam(name = "userId") int userId) {
+        userId= 451691;
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(orderService.findOrderByUserId(userId))
+                .buildData(), HttpStatus.OK);
     }
 
 }

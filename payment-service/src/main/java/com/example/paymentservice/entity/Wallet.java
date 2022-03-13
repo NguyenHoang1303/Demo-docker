@@ -1,10 +1,12 @@
 package com.example.paymentservice.entity;
 
+
 import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -15,9 +17,8 @@ import javax.persistence.Id;
 public class Wallet {
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
-
-    private double balance;
+    private Long userId;
+    private BigDecimal balance;
     private String name;
 
 }

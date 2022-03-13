@@ -15,32 +15,57 @@ services:
       - mynet
     volumes:
       - ./database:/docker-entrypoint-initdb.d
-#  order-service:
-#    depends_on:
-#      - database-service
-#    build: ./order-service
-#    volumes:
-#      - ./order-service:/order-service
-#      - ~/.m2:/root/.m2
-#    working_dir: /order-service
-#    ports:
-#      - 8080:8080
-#    networks:
-#      - mynet
-#    command: mvn clean spring-boot:run
-#  payment-service:
-#    depends_on:
-#      - database-service
-#    build: ./payment-service
-#    volumes:
-#      - ./payment-service:/payment-service
-#      - ~/.m2:/root/.m2
-#    working_dir: /payment-service
-#    ports:
-#      - 8081:8080
-#    networks:
-#      - mynet
-#    command: mvn clean spring-boot:run
+  order-service:
+    container_name: order-service-container
+    depends_on:
+      - rabbitmq3
+      - database-service
+    build: ./order-service
+    volumes:
+      - ./order-service:/order-service
+      - ~/.m2:/root/.m2
+    working_dir: /order-service
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    ports:
+      - 8080:8080
+    networks:
+      - mynet
+    command: mvn clean spring-boot:run
+  payment-service:
+    container_name: payment-service-container
+    depends_on:
+      - rabbitmq3
+      - database-service
+    build: ./payment-service
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    volumes:
+      - ./payment-service:/payment-service
+      - ~/.m2:/root/.m2
+    working_dir: /payment-service
+    ports:
+      - 8081:8080
+    networks:
+      - mynet
+    command: mvn clean spring-boot:run
+  inventory-service:
+    container_name: inventory-service-container
+    depends_on:
+      - rabbitmq3
+      - database-service
+    build: ./inventory-service
+    environment:
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    volumes:
+      - ./inventory-service:/inventory-service
+      - ~/.m2:/root/.m2
+    working_dir: /inventory-service
+    ports:
+      - 8086:8080
+    networks:
+      - mynet
+    command: mvn clean spring-boot:run
   authentication-service:
     container_name: authentication-service-container
     depends_on:
@@ -82,5 +107,18 @@ services:
     networks:
       - mynet
     ports:
-      - 8888:8080
+      - 8889:8080
 
+  rabbitmq3:
+    container_name: rabbitmq
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      # AMQP protocol port
+      - 5672:5672
+      # HTTP management UI
+      - 15672:15672
+    networks:
+      - mynet

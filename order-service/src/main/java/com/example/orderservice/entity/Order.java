@@ -4,30 +4,34 @@ package com.example.orderservice.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
+@Entity
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "orders")
+@AllArgsConstructor
+@Table(name = "orders")
 @ToString
-public class Order {
+public class Order extends BaseEntity{
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "ship_name")
-    private String shipName;
-    @Column(name = "ship_phone")
-    private String shipPhone;
-    @Column(name = "ship_email")
-    private String shipEmail;
-    @Column(name = "ship_address")
-    private String shipAddress;
+    @OneToMany(mappedBy = "order",cascade = CascadeType.ALL)
+    private Set<OrderDetail> orderDetails = new HashSet<>();
 
-    @Column(name = "total_price")
-    private double totalPrice;
-
+    private Long userId;
+    private BigDecimal totalPrice;
+    private String address;
+    private String name;
+    private String phone;
+    private String email;
+    private String paymentStatus;
+    private String inventoryStatus;
+    private String orderStatus;
 
 }
