@@ -22,7 +22,6 @@ public class OrderDto {
     private String paymentStatus;
     private String inventoryStatus;
     private String orderStatus;
-    private String device_token;
 
     public OrderDto(Order order) {
         this.orderId = order.getId();
@@ -35,14 +34,4 @@ public class OrderDto {
             this.orderDetails.add(new OrderDetailDto(orderDetail));
         });
     }
-
-    public boolean validationPayment(){
-        return this.totalPrice.compareTo(BigDecimal.valueOf(0)) > 0
-                && this.orderId != null && this.userId != null && this.paymentStatus != null;
-    }
-
-    public boolean validationInventory(){
-        return this.orderId != null && this.orderStatus != null && this.inventoryStatus != null;
-    }
-
 }

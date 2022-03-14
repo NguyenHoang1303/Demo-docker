@@ -27,9 +27,4 @@ public class OrderDetailDto {
         this.unitPrice = orderDetail.getUnitPrice();
     }
 
-    public boolean validation() {
-        return this.orderId != null && this.productId != null && this.productName != null
-                && this.quantity > 0 && this.unitPrice.compareTo(BigDecimal.valueOf(0)) > 0;
-    }
-
 }

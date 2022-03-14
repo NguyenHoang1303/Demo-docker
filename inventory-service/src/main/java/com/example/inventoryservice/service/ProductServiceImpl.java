@@ -2,12 +2,14 @@ package com.example.inventoryservice.service;
 
 import com.example.inventoryservice.entity.Product;
 import com.example.inventoryservice.repository.ProductRepository;
+import com.example.inventoryservice.specification.HandlerQuery;
+import com.example.inventoryservice.specification.ObjectFilter;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -20,29 +22,45 @@ public class ProductServiceImpl implements ProductService {
     RabbitTemplate rabbitTemplate;
 
     @Override
-    public Page getAll(int page, int pageSize){
-        if (page <= 0 ){
-            page = 1;
-        }
-        if (pageSize < 0){
-            page = 9;
-        }
-        return productRepo.findAll(PageRequest.of(page - 1, pageSize));
-    }
-    @Override
-    public Product findById(Long id){
-        return productRepo.findById(id).orElse(null);
+    public Page findAll(ObjectFilter filter) {
+        return productRepo.findAll(HandlerQuery.creatQuery(filter),
+                HandlerQuery.creatPagination(filter.getPage(), filter.getPageSize()));
     }
 
     @Override
-    public Product save(Product product){
+    public List<Product> saveAll(Set<Product> products) {
+        return productRepo.saveAll(products);
+    }
+
+    @Override
+    public Product save(Product product) {
         return productRepo.save(product);
     }
 
     @Override
-    public void saveAll(Set<Product> products) {
-        productRepo.saveAll(products);
+    public Product update(Product newItem) {
+        try {
+            Product product = productRepo.getById(newItem.getId());
+            product.setInfo(newItem);
+            return productRepo.save(product);
+        } catch (Exception e) {
+            throw new RuntimeException("System fail, please try again.");
+        }
     }
 
+    @Override
+    public boolean delete(int productId) {
+        try {
+            Product product = productRepo.getById((long) productId);
+            product.setStatus(-1);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
+    @Override
+    public Product findById(long productId) {
+        return productRepo.findById(productId).orElse(null);
+    }
 }

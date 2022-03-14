@@ -29,15 +29,15 @@ public class AccountController {
     AccountService accountService;
 
     @RequestMapping(method = RequestMethod.GET)
-    @RolesAllowed("admin")
+    @RolesAllowed("view_users")
     public ResponseEntity getList() throws IOException {
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.findAll())
                 .build(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path ="/{id}" )
-    @RolesAllowed("admin")
+    @RequestMapping(method = RequestMethod.DELETE, path ="{id}" )
+    @RolesAllowed("delete_users")
     public ResponseEntity delete(@PathVariable String id){
         if (!accountService.delete(id)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()
@@ -50,14 +50,15 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path ="/{id}" )
-    @RolesAllowed("admin")
+    @RolesAllowed("views_user")
     public ResponseEntity getAccountById(@PathVariable String id){
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.findById(id))
                 .build(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, path ="/{id}" )
+    @RequestMapping(method = RequestMethod.PUT, path ="{id}" )
+    @RolesAllowed("update_user")
     public ResponseEntity updateAccountById(@PathVariable String id, @RequestBody Account account){
         if (!accountService.update(id, account)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()
@@ -69,7 +70,15 @@ public class AccountController {
                 .build(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path ="/{id}/role-mapping" )
+    @RequestMapping(method = RequestMethod.PUT, path ="profile" )
+    public ResponseEntity getProfile(){
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(accountService.getProfile())
+                .build(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path ="{id}/role-mapping" )
+    @RolesAllowed("update_user")
     public ResponseEntity addRoleToUser(@PathVariable String id, @RequestBody RoleKeyCloak roleKeyCloak){
         if (!accountService.addRoleToUser(id, roleKeyCloak)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()

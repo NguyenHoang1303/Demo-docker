@@ -78,7 +78,7 @@ services:
     networks:
       - mynet
     ports:
-      - 8000:8000
+      - 8090:8080
     command: mvn clean spring-boot:run
   keycloak:
     container_name: keycloak_container
@@ -108,7 +108,6 @@ services:
       - mynet
     ports:
       - 8889:8080
-
   rabbitmq3:
     container_name: rabbitmq
     image: rabbitmq:3.8-management-alpine

@@ -41,7 +41,6 @@ public class ConsumerService {
     @Autowired
     TranslationService translationService;
 
-
     @Transactional
     public void handlerInventory( OrderEvent orderEvent) {
         orderEvent.setQueueName(QUEUE_INVENTORY);
@@ -72,7 +71,6 @@ public class ConsumerService {
             importHistories.add(new ImportHistory(odt, orderEvent.getOrderId()));
             products.add(product);
         }
-
         try {
             productService.saveAll(products);
             importRepository.saveAll(importHistories);
@@ -84,8 +82,6 @@ public class ConsumerService {
             rabbitTemplate.convertAndSend(DIRECT_EXCHANGE, DIRECT_ROUTING_KEY_INVENTORY, orderEvent);
             throw new RuntimeException(e.getMessage());
         }
-
-
     }
 
     private void handlerPendingStatus( OrderEvent orderEvent) {
@@ -106,7 +102,6 @@ public class ConsumerService {
             exportHistorySet.add(new ExportHistory(odt, orderEvent.getOrderId()));
             products.add(product);
         }
-
         try {
             exportRepository.saveAll(exportHistorySet);
             productService.saveAll(products);

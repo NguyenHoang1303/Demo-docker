@@ -20,14 +20,20 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(name = "name")
     private String name;
 
+    @Column(name = "price ")
     private BigDecimal price;
 
+    @Column(name = "supplier_id")
     private Long supplierId;
+
+    @Column(name = "unit_in_stock")
     private int unitInStock;
+
+    @Column(name = "status")
+    private int status;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -38,16 +44,23 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String thumbnail;
 
-
     @Column(name = "created_at")
     private LocalDate createdAt;
-
 
     @Column(name = "updated_at")
     private LocalDate updatedAt;
 
-
     @Column(name = "deleted_at")
     private LocalDate deletedAt;
+
+    public void setInfo(Product newInfo) {
+
+        this.name = newInfo.getName();
+        this.price = newInfo.getPrice();
+        this.description = newInfo.getDescription();
+        this.thumbnail = newInfo.getThumbnail();
+        this.detail = newInfo.getDetail();
+        this.updatedAt = LocalDate.now();
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.example.authenticationservice.Dto;
 
+import com.example.authenticationservice.entity.ProfileKeyCloak;
 import lombok.*;
 
 import java.util.List;
@@ -17,4 +18,11 @@ public class AccountDto {
     private String firstName;
     private String lastName;
     private List<String> roles;
+
+    public AccountDto(ProfileKeyCloak profile) {
+        id = profile.getSub();
+        username = profile.getPreferred_username();
+        firstName = profile.getGiven_name();
+        lastName = profile.getFamily_name();
+    }
 }

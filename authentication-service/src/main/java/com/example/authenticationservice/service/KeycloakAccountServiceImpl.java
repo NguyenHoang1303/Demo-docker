@@ -2,10 +2,7 @@ package com.example.authenticationservice.service;
 
 
 import com.example.authenticationservice.Dto.AccountDto;
-import com.example.authenticationservice.entity.Account;
-import com.example.authenticationservice.entity.AccountKeyCloak;
-import com.example.authenticationservice.entity.Credential;
-import com.example.authenticationservice.entity.RoleKeyCloak;
+import com.example.authenticationservice.entity.*;
 import com.example.authenticationservice.exception.BadRequestException;
 import com.example.authenticationservice.exception.ConflictException;
 import com.example.authenticationservice.exception.NotFoundException;
@@ -172,6 +169,23 @@ public class KeycloakAccountServiceImpl implements AccountService {
             }
         }
         return credential;
+    }
+
+    @Override
+    public AccountDto getProfile() {
+        AccountDto account = new AccountDto();
+        try {
+            Document document = Jsoup
+                    .connect(PROFILE_URL)
+                    .method(Connection.Method.GET)
+                    .ignoreContentType(true)
+                    .header(AUTHORIZATION, BEARER + keyCloakTokenAdmin).execute().parse();
+            ProfileKeyCloak profile = new Gson().fromJson(document.text(), ProfileKeyCloak.class);
+            account = new AccountDto(profile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return account;
     }
 
 }
