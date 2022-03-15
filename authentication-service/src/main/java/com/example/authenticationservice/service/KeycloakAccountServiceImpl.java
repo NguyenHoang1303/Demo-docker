@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.authenticationservice.constant.KeyCloakConstant.*;
@@ -34,14 +35,14 @@ public class KeycloakAccountServiceImpl implements AccountService {
     }
 
     @Override
-    public List<Account> findAll() throws IOException {
+    public List<AccountDto> findAll() throws IOException {
         loginClientKeyCloak();
         Document document = Jsoup
                 .connect(ROOT_USER)
                 .method(Connection.Method.GET)
                 .ignoreContentType(true)
                 .header(AUTHORIZATION, BEARER + keyCloakTokenAdmin).execute().parse();
-        Type listType = new TypeToken<List<Account>>() {
+        Type listType = new TypeToken<List<AccountDto>>() {
         }.getType();
         return new Gson().fromJson(document.text(), listType);
     }
@@ -186,6 +187,35 @@ public class KeycloakAccountServiceImpl implements AccountService {
             e.printStackTrace();
         }
         return account;
+    }
+
+    @Override
+    public boolean seedRole() {
+        List<Role> roles = new ArrayList<>();
+        roles.add(new Role("view_product"));
+        roles.add(new Role("edit_product"));
+        roles.add(new Role("delete_product"));
+        roles.add(new Role("view_order"));
+        roles.add(new Role("edit_order"));
+        roles.add(new Role("delete_order"));
+        roles.add(new Role("view_user"));
+        roles.add(new Role("edit_user"));
+        roles.add(new Role("delete_user"));
+        try {
+            loginClientKeyCloak();
+            for (Role role : roles) {
+                Jsoup.connect(ROOT_ROLE)
+                        .header(CONTENT_TYPE, APPLICATION_JSON)
+                        .method(Connection.Method.POST)
+                        .ignoreContentType(true)
+                        .requestBody(new Gson().toJson(role))
+                        .header(AUTHORIZATION, BEARER + keyCloakTokenAdmin)
+                        .execute().parse();
+            }
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }

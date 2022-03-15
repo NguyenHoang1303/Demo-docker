@@ -25,7 +25,7 @@ public class ProductController {
 
 
     @RequestMapping(method = RequestMethod.GET)
-    @RolesAllowed("view_products")
+    @RolesAllowed("view_product")
     public ResponseEntity getAll(@RequestParam(name = "page", defaultValue = "1") int page,
                                  @RequestParam(name = "pageSize", defaultValue = "9") int pageSize,
                                  @RequestParam(name = "id", defaultValue = "0") int id,
@@ -50,7 +50,7 @@ public class ProductController {
                 .buildData(), HttpStatus.OK);
     }
 
-    @RolesAllowed("create_products")
+    @RolesAllowed("create_product")
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity save(@Valid @RequestBody Product product) {
         return new ResponseEntity<>(new RESTResponse.Success()
@@ -58,7 +58,7 @@ public class ProductController {
                 .build(), HttpStatus.OK);
     }
 
-    @RolesAllowed("edit_products")
+    @RolesAllowed("edit_product")
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity edit(@Valid @RequestBody Product product) {
         return new ResponseEntity<>(new RESTResponse.Success()
@@ -66,7 +66,7 @@ public class ProductController {
                 .build(), HttpStatus.OK);
     }
 
-    @RolesAllowed("delete_products")
+    @RolesAllowed("delete_product")
     @RequestMapping(method = RequestMethod.DELETE, path = "{id}")
     public ResponseEntity delete(@PathVariable int id) {
        if (productService.delete(id)){

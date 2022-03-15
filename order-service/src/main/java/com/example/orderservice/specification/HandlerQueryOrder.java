@@ -93,6 +93,6 @@ public class HandlerQueryOrder {
     }
 
     public static Pageable creatPagination(int page, int pageSize) {
-        return PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, ObjectFilter.CREATED_AT);
+        return PageRequest.of(page - 1, pageSize, Sort.Direction.DESC, FieldOrder.CREATED_AT.getValue());
     }
 }

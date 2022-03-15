@@ -29,7 +29,7 @@ public class AccountController {
     AccountService accountService;
 
     @RequestMapping(method = RequestMethod.GET)
-    @RolesAllowed("view_users")
+    @RolesAllowed("view_user")
     public ResponseEntity getList() throws IOException {
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.findAll())
@@ -37,7 +37,7 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path ="{id}" )
-    @RolesAllowed("delete_users")
+    @RolesAllowed("delete_user")
     public ResponseEntity delete(@PathVariable String id){
         if (!accountService.delete(id)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()
@@ -50,7 +50,7 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.GET, path ="/{id}" )
-    @RolesAllowed("views_user")
+    @RolesAllowed("view_user")
     public ResponseEntity getAccountById(@PathVariable String id){
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.findById(id))
@@ -58,7 +58,7 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, path ="{id}" )
-    @RolesAllowed("update_user")
+    @RolesAllowed("edit_user")
     public ResponseEntity updateAccountById(@PathVariable String id, @RequestBody Account account){
         if (!accountService.update(id, account)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()
@@ -70,7 +70,7 @@ public class AccountController {
                 .build(), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, path ="profile" )
+    @RequestMapping(method = RequestMethod.GET, path ="profile" )
     public ResponseEntity getProfile(){
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.getProfile())
@@ -78,7 +78,7 @@ public class AccountController {
     }
 
     @RequestMapping(method = RequestMethod.POST, path ="{id}/role-mapping" )
-    @RolesAllowed("update_user")
+    @RolesAllowed("edit_user")
     public ResponseEntity addRoleToUser(@PathVariable String id, @RequestBody RoleKeyCloak roleKeyCloak){
         if (!accountService.addRoleToUser(id, roleKeyCloak)){
             return new ResponseEntity<>(new RESTResponse.SimpleError()
@@ -102,6 +102,13 @@ public class AccountController {
     public ResponseEntity register(@RequestBody Account account){
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.save(account))
+                .build(), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "migrate-role")
+    public ResponseEntity migrateRole(){
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(accountService.seedRole())
                 .build(), HttpStatus.OK);
     }
 

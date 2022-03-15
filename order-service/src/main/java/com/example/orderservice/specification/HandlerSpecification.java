@@ -28,16 +28,16 @@ public class HandlerSpecification implements Specification<Order> {
         log.info("value: " + value);
         switch (operation) {
             case Operation.GREATER_THAN_OR_EQUAL_TO:
-                if (key.equalsIgnoreCase(ObjectFilter.CREATED_AT)) {
+                if (key.equalsIgnoreCase(FieldOrder.CREATED_AT.getValue())) {
                     LocalDate date = HandlerDate.convertStringToLocalDate(value.toString());
-                    return builder.greaterThanOrEqualTo(root.get(ObjectFilter.CREATED_AT), date);
+                    return builder.greaterThanOrEqualTo(root.get(FieldOrder.CREATED_AT.getValue()), date);
                 }
                 return builder.greaterThanOrEqualTo(root.get(key), value.toString());
 
             case Operation.lESS_THAN_OR_EQUAL_TO:
-                if (key.equalsIgnoreCase(ObjectFilter.CREATED_AT)) {
+                if (key.equalsIgnoreCase(FieldOrder.CREATED_AT.getValue())) {
                     LocalDate date = HandlerDate.convertStringToLocalDate(criteria.getValue().toString());
-                    return builder.lessThanOrEqualTo(root.get(ObjectFilter.CREATED_AT), date);
+                    return builder.lessThanOrEqualTo(root.get(FieldOrder.CREATED_AT.getValue()), date);
                 }
                 return builder.lessThanOrEqualTo(root.get(key), value.toString());
 
