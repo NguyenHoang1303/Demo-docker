@@ -17,7 +17,8 @@ import java.io.IOException;
 
 @RestController
 @Log4j2
-@RequestMapping("auth/api/v1/accounts")
+@CrossOrigin("*")
+@RequestMapping("api/v1/auth")
 public class AccountController {
 
     @Bean

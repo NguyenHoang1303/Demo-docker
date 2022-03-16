@@ -30,7 +30,7 @@ public class Product {
     private Long supplierId;
 
     @Column(name = "unit_in_stock")
-    private int unitInStock;
+    private Integer unitInStock;
 
     @Column(name = "status")
     private int status;
