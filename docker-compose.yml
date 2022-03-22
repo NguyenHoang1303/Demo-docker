@@ -103,7 +103,7 @@ services:
       DB_PASSWORD: root
       KEYCLOAK_USER: admin
       DB_PORT: 3306
-      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_PASSWORD: 123
     networks:
       - mynet
     ports:

@@ -34,7 +34,7 @@ public class AccountController {
     public ResponseEntity getList() throws IOException {
         return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(accountService.findAll())
-                .build(), HttpStatus.OK);
+                .buildData(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, path ="{id}" )

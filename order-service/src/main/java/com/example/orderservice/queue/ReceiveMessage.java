@@ -20,8 +20,6 @@ public class ReceiveMessage {
     @Autowired
     ConsumerService consumerService;
 
-
-
     @RabbitListener(queues = {QUEUE_ORDER})
     public void getMessage(OrderEvent orderEvent) {
         consumerService.handlerMessage(orderEvent);
